@@ -38,6 +38,7 @@ $app = new \Slim\Slim();
 
 
 
+
 $app->get('/:nombre/clima', function ($nombre)
 {
 	$response = array();
@@ -111,6 +112,30 @@ $app->get('/:nombre', function ($nombre)
     echoResponse(200, $response);
 });
 
+$app->get('/:tiposuelo/:tipoplanta', function ($nombre,$nombre_tipoplanta)
+ {
+    
+    $response = array();
+    $db = new DbHandler();
+	$con = $db->getConn();
+	
+ 
+        $sth = $con->prepare("SELECT * 
+            FROM tiposuelo
+            WHERE nombre = :nombre and tipoPlanta = :tipoplanta");
+ 
+        $sth->bindParam(':nombre', $nombre, PDO::PARAM_STR,255);
+		$sth->bindParam(':tipoplanta', $nombre_tipoplanta, PDO::PARAM_STR,255);
+        $sth->execute();
+ 
+        $suelo = $sth->fetch(PDO::FETCH_OBJ);
+		if($suelo == false)
+			$response = array();
+		else	
+			$response["suelo"] = $suelo;
+
+    echoResponse(200, $response);
+});
 
 
 
